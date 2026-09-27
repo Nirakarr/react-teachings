@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const CounterApp = () => {
   const [count, setCount] = useState(0);
+  console.log("CounterApp rendered");
   return (
     <div>
       <h1>Counter App</h1>

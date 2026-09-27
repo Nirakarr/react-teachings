@@ -1,0 +1,61 @@
+/* =========================
+   PORTFOLIO SECTION
+   ========================= */
+
+.portfolio {
+    padding: 40px 8%;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.portfolio h2 {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    text-align: left;
+}
+
+.project-card {
+    overflow: hidden;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.project-card img {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.project-content {
+    padding: 20px;
+}
+
+.project-content h3 {
+    margin-bottom: 10px;
+}
+
+.project-content p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.project-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+@media (max-width: 800px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+}

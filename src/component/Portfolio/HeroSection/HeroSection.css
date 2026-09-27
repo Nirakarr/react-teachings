@@ -1,0 +1,79 @@
+.hero {
+    min-height: 90vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 50px 8%;
+    background-image: url("../../../assets/profile.jpg");
+    background-size: cover;
+    background-position: center;
+}
+.hero::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    background-color: rgba(31, 30, 30, 0.6);
+    pointer-events: none;
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.intro {
+    font-size: 20px;
+    color: #4da3ff;
+
+    margin-bottom: 10px;
+}
+
+.hero h1 {
+    font-size: 60px;
+    color: white;
+
+    margin-bottom: 10px;
+}
+
+.hero h2 {
+    font-size: 30px;
+    color: #ddd;
+
+    margin-bottom: 20px;
+}
+
+.description {
+    max-width: 600px;
+
+    line-height: 1.6;
+    color: #eee;
+
+    margin-bottom: 30px;
+}
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+}
+.primary-button {
+    background-color: #007bff;
+    color: white;
+
+    padding: 12px 25px;
+
+    text-decoration: none;
+    border-radius: 5px;
+}
+.secondary-button {
+    border: 2px solid #007bff;
+    color: #007bff;
+
+    padding: 10px 23px;
+
+    text-decoration: none;
+    border-radius: 5px;
+}

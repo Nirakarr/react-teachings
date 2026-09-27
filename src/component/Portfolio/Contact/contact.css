@@ -1,0 +1,87 @@
+/* =========================
+   CONTACT SECTION
+   ========================= */
+
+.contact {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 60px;
+    padding: 80px 8%;
+}
+
+.contact-info h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.contact-info > p {
+    color: #666;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.contact-info strong {
+    color: #333;
+}
+
+.social-links {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: white;
+    background-color: #007bff;
+    border-radius: 50%;
+    text-decoration: none;
+}
+
+.social-links a:hover {
+    background-color: #0056b3;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font: inherit;
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+.contact-form button {
+    border: 0;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+.footer {
+    padding: 25px 8%;
+    color: white;
+    background-color: #222;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .contact {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}

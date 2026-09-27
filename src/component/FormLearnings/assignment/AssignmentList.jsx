@@ -14,14 +14,15 @@ const AssignmentList = () => {
     setError("");
 
     try {
-      const response = await fetch(`${ASSIGNMENTS_API}?_limit=10`);
+      // const response = await fetch(`${ASSIGNMENTS_API}?_limit=10`);
 
-      if (!response.ok) {
-        throw new Error("Could not load assignments.");
-      }
+      // if (!response.ok) {
+      //   throw new Error("Could not load assignments.");
+      // }
 
-      const posts = await response.json();
-      setAssignments(posts);
+      // const posts = await response.json();
+      const data = localStorage.getItem("assignments");
+      setAssignments(data ? JSON.parse(data) : []);
       setStatus("success");
     } catch (requestError) {
       setError(requestError.message);
@@ -32,7 +33,7 @@ const AssignmentList = () => {
   useEffect(() => {
     fetchAssignments();
   }, [fetchAssignments]);
-
+  console.log(assignments);
   return (
     <main className="list-page">
       <section className="list-header">
@@ -77,10 +78,16 @@ const AssignmentList = () => {
                 {String(index + 1).padStart(2, "0")}
               </div>
               <div className="assignment-copy">
-                <h2>{assignment.title}</h2>
-                <p>{assignment.body}</p>
+                <h2>{assignment.name}</h2>
+                <p>{assignment.description}</p>
               </div>
               <span className="assignment-id">ID {assignment.id}</span>
+              <Link
+                className="primary-link"
+                to={`/assignments/${assignment.id}/edit`}
+              >
+                Edit
+              </Link>
             </article>
           ))}
         </section>

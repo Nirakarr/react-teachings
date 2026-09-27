@@ -190,6 +190,10 @@ fieldset legend {
   transition: background 160ms ease, transform 160ms ease;
 }
 
+.form-actions .back-link {
+  margin-bottom: 0;
+}
+
 .form-actions button:hover:not(:disabled) {
   background: #8b3827;
   transform: translateY(-1px);

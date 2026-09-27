@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./createassingmentForm.css";
+import { useNavigate } from "react-router-dom";
 
 const initialForm = {
   name: "",
@@ -16,7 +17,7 @@ const initialForm = {
 const CreateAssignment = () => {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: "", message: "" });
-
+  const navigate = useNavigate();
   const updateField = (event) => {
     const { name, value, type, checked } = event.target;
     console.log(`Updating field: ${name} = ${value}`);
@@ -45,11 +46,22 @@ const CreateAssignment = () => {
       }
 
       const result = await response.json();
+      // 1. Get existing assignments from localStorage
+      const existingAssignments = JSON.parse(
+        localStorage.getItem("assignments") || "[]",
+      );
+
+      // 2. Add the new assignment to the existing array
+      const updatedAssignments = [...existingAssignments, result];
+
+      // 3. Save the updated array back to localStorage
+      localStorage.setItem("assignments", JSON.stringify(updatedAssignments));
       setStatus({
         type: "success",
         message: `Assignment created successfully (demo id: ${result.id}).`,
       });
       setForm(initialForm);
+      navigate("/assignments");
     } catch (error) {
       setStatus({ type: "error", message: error.message });
     }

@@ -1,52 +1,80 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./createProductForm.css";
 
-const initialForm = {
+const Product_API = "https://fakeapi.net/products";
+
+const emptyForm = {
   title: "",
   description: "",
-  category: "Electronics",
+  category: "",
   price: "",
   stock: "",
   brand: "",
   image: "",
-  ratingRate: "0",
-  ratingCount: "0",
+  ratingRate: "",
+  ratingCount: "",
   color: "",
   weight: "",
   storage: "",
 };
 
-const CreateProduct = () => {
-  const [form, setForm] = useState(initialForm);
-  const [status, setStatus] = useState({
-    type: "",
-    message: "",
-  });
+const EditProduct = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [form, setForm] = useState(emptyForm);
+  const [status, setStatus] = useState({
+    type: "loading",
+    message: "Loading product...",
+  });
+  const fetchProduct = useCallback(async () => {
+    setStatus({ type: "loading", message: "Loading product..." });
+
+    try {
+      const response = await fetch(`${Product_API}/${id}`);
+      if (!response.ok) {
+        throw new Error("Could not load this product.");
+      }
+
+      const result = await response.json();
+      const product = result.data ?? result;
+      setForm({
+        title: product.title ?? "",
+        description: product.description ?? "",
+        category: product.category ?? "",
+        price: String(product.price ?? ""),
+        stock: String(product.stock ?? ""),
+        brand: product.brand ?? "",
+        image: product.image ?? "",
+        ratingRate: String(product.rating?.rate ?? ""),
+        ratingCount: String(product.rating?.count ?? ""),
+        color: product.specs?.color ?? "",
+        weight: product.specs?.weight ?? "",
+        storage: product.specs?.storage ?? "",
+      });
+      setStatus({ type: "", message: "" });
+    } catch (error) {
+      setStatus({ type: "error", message: error.message });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [id]);
+
   const updateField = (event) => {
     const { name, value } = event.target;
-
-    setForm((currentForm) => ({
-      ...currentForm,
-      [name]: value,
-    }));
+    setForm((currentForm) => ({ ...currentForm, [name]: value }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Submitting product:", form);
-    setStatus({
-      type: "loading",
-      message: "Submitting product...",
-    });
+    setStatus({ type: "loading", message: "Saving product..." });
 
     try {
-      const response = await fetch("https://fakeapi.net/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(`${Product_API}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: form.title,
           description: form.description,
@@ -68,34 +96,42 @@ const CreateProduct = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create product.");
+        throw new Error("Failed to update product.");
       }
 
-      await response.json();
-
-      setStatus({
-        type: "success",
-        message: "Product created successfully!",
-      });
-
-      setForm(initialForm);
-      navigate("/products");
-    } catch {
-      setStatus({
-        type: "error",
-        message: "Something went wrong. Please try again.",
-      });
+      navigate("/");
+    } catch (error) {
+      setStatus({ type: "error", message: error.message });
     }
   };
+
+  if (status.type === "loading" && !form.title) {
+    return (
+      <main className="product-page">
+        <p className="list-message">{status.message}</p>
+      </main>
+    );
+  }
+
+  if (status.type === "error" && !form.title) {
+    return (
+      <main className="product-page">
+        <p className="form-status error" role="alert">
+          {status.message}
+        </p>
+        <Link className="back-link" to="/">
+          Back to products
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main className="product-page">
       <section className="product-intro">
         <p className="eyebrow">Admin Panel</p>
-
-        <h1>Create Product</h1>
-
-        <p>Add a new product by providing the required product information.</p>
+        <h1>Edit Product</h1>
+        <p>Update the product information shown in the product list.</p>
       </section>
 
       <form className="product-form" onSubmit={handleSubmit}>
@@ -103,42 +139,31 @@ const CreateProduct = () => {
           <label className="field field-wide">
             Product Title
             <input
-              type="text"
               name="title"
               value={form.title}
               onChange={updateField}
-              placeholder="Enter product title"
               required
             />
           </label>
-
           <label className="field field-wide">
             Product Description
             <textarea
               name="description"
               value={form.description}
               onChange={updateField}
-              placeholder="Enter product description"
               rows="5"
               required
             />
           </label>
-
           <label className="field">
             Category
-            <select
+            <input
               name="category"
               value={form.category}
               onChange={updateField}
-            >
-              <option>Electronics</option>
-              <option>Clothing</option>
-              <option>Books</option>
-              <option>Grocery</option>
-              <option>Furniture</option>
-            </select>
+              required
+            />
           </label>
-
           <label className="field">
             Price
             <input
@@ -146,12 +171,11 @@ const CreateProduct = () => {
               name="price"
               value={form.price}
               onChange={updateField}
-              placeholder="Enter price"
               min="0"
+              step="0.01"
               required
             />
           </label>
-
           <label className="field">
             Stock Quantity
             <input
@@ -159,24 +183,19 @@ const CreateProduct = () => {
               name="stock"
               value={form.stock}
               onChange={updateField}
-              placeholder="Enter stock quantity"
               min="0"
               required
             />
           </label>
-
           <label className="field">
             Brand
             <input
-              type="text"
               name="brand"
               value={form.brand}
               onChange={updateField}
-              placeholder="Enter brand"
               required
             />
           </label>
-
           <label className="field field-wide">
             Product Image URL
             <input
@@ -184,11 +203,9 @@ const CreateProduct = () => {
               name="image"
               value={form.image}
               onChange={updateField}
-              placeholder="https://example.com/product.jpg"
               required
             />
           </label>
-
           <label className="field">
             Rating
             <input
@@ -216,7 +233,6 @@ const CreateProduct = () => {
           <label className="field">
             Color
             <input
-              type="text"
               name="color"
               value={form.color}
               onChange={updateField}
@@ -226,7 +242,6 @@ const CreateProduct = () => {
           <label className="field">
             Weight
             <input
-              type="text"
               name="weight"
               value={form.weight}
               onChange={updateField}
@@ -236,7 +251,6 @@ const CreateProduct = () => {
           <label className="field">
             Storage
             <input
-              type="text"
               name="storage"
               value={form.storage}
               onChange={updateField}
@@ -247,21 +261,20 @@ const CreateProduct = () => {
 
         <div className="form-actions">
           <button type="submit" disabled={status.type === "loading"}>
-            {status.type === "loading" ? "Submitting..." : "Create Product"}
+            {status.type === "loading" ? "Saving..." : "Save Changes"}
           </button>
-
-          {status.message && (
-            <div className={`form-status ${status.type}`} role="status">
-              <p>{status.message}</p>
-            </div>
-          )}
           <Link className="back-link" to="/">
-            Back to products
+            Cancel
           </Link>
+          {status.type === "error" && (
+            <p className="form-status error" role="alert">
+              {status.message}
+            </p>
+          )}
         </div>
       </form>
     </main>
   );
 };
 
-export default CreateProduct;
+export default EditProduct;
